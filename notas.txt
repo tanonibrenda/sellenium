@@ -1,0 +1,177 @@
+Intento de Resumen de Primera Prueba Automatizada
+1. #en terminal, instalar selenium: pip install selenium
+
+2. #Abrir una terminal y crear un entorno virtual de windows: 
+
+python -m venv venv
+
+#va a aparecer una carpeta venv
+
+3.  #activar el entorno virtual:
+venv\Scripts\activate
+
+4. #en terminal instalar:
+pip install webdriver-manager
+
+#nota: de la primera prueba que hice hasta esta, me saltó una nueva actualización que descargué. Tuve muchas problemas para hacerlo funcionar. Al final lo arreglé desde VSC haciendo control shift p, escribir en el input que abre: Python: Select Interpreter, y seleccionar del menú desplegable venv\Scripts\python.exe
+
+5. #Crear archivo para trabajar con las pruebas con Chrome, ejemplo main_Chrome.py
+
+6. #Vamos a empezar haciendo pruebas. Escribir en el archivo:
+if __name__=="__main__":
+	pass
+
+#Y debería correr en la terminal
+
+#cambiar pass por :
+if __name__=="__main__":
+	print("hola Brenda")
+
+
+7. #definir la función main:
+
+def main():
+	pass
+if __name__=="__main__":
+	main()
+
+8. #ahora va usar selenium en python. Hay que usar un driver. Es una identidad del objeto que va a usar python.
+entonces lo primero es importar chrome:
+
+from selenium import webdriver 
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+
+#esto sirve para se pueda usar chrome y que python se encargue de hacer funcionar python
+
+9. #crean el service
+
+def main():
+    service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()
+#si no está instalado chrome, lo instala
+
+10. Crear Navegador
+
+driver = webdriver.Chrome(service=service, options=options)
+
+11. Probar si abre el Navegador
+ probar navegador
+
+driver.get("https://www.google.com")
+#poner la url completa
+
+correr con:
+ python main_Chrome.py 
+
+
+#hasta este punto el archivo esta:
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+def main():
+    service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()  
+
+    driver = webdriver.Chrome(service=service, options=options)
+    driver.get("https://www.google.com")
+
+if __name__ == "__main__":
+    main()
+
+#al abrir va a decir que esta abriendo el navegador aparece un cartel que dice "un software de prueba Automatizado esta ejecutando Chrome", no lo lee NVDA pero si lee DevTools listening on ws://127.0.0.1:63135/devtools/browser y el resto de la dirección
+
+12. #si queremos que el navegador se cierre 
+driver.quit()
+
+13. #importar time sleep para que al correr tenga unos segundos de delate y permita darse cuenta como correr
+
+import time
+
+14. #usar time
+driver.get("https://www.google.com")
+time.sleep(10) #o la cantidad de segundos que se quiera abierto
+driver.quit() #y correr el programa para ver si funciona.
+
+15. #Vamos a empezar con la prueba en sí. Tenemos que cambiar primero la url.
+
+driver.get("https://testpages.eviltester.com/styled/html5-form-test.html")
+
+#quedando el código así:
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+import time
+
+def main():
+    service = Service(ChromeDriverManager().install())
+    options = webdriver.ChromeOptions()  
+
+   
+   
+    driver = webdriver.Chrome(service=service, options=options)         
+    driver.get("https://testpages.eviltester.com/styled/html5-form-test.html")
+    time.sleep(20)
+
+if __name__ == "__main__":
+    main()
+
+16. #Ahora vamos a importar gestores de tiempo de espera
+
+from selenium.webdriver.support.ui import WebDriverWait as Wait
+from selenium.webdriver.support import expected_conditions as EC
+
+#y los gestores de los Id y clases
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+
+17. #Escribir las variables que vamos a usar:
+
+COLOR = "#C12F2F"  # Representación de color en formato hexadecimal
+DATA = "2024-11-20"  
+DATETIME = "2024-11-20T00:00"  
+EMAIL = "yo@mail.com"
+MONTH = "mayo"
+YEAR = "2024"  # si no se pone el mes y el año por separado, tira error
+NUMBER = "44"
+
+18. #ahora viene lo más difícil: escribir los pasos a realizar para llenar el formulario. Me llevó varios pasos de prueba y error para que funciona y no se trabe. Para eso hay que usar el inspector de Chrome, y buscar dentro de los input y botenes el ID, que van a ser como se van a llamar.
+
+ pick_a_color = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "colour-picker")))
+        pick_a_color.clear() #se tiene que siempre limpiar la opción sino se suma con la que viene predeterminada en cada opción y salta error
+        pick_a_color.send_keys(COLOR)
+
+        pick_a_date = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "date-picker")))
+        pick_a_date.clear()
+        pick_a_date.send_keys(DATA)
+
+        pick_a_datetime = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "date-time-picker")))
+        pick_a_datetime.clear()
+        pick_a_datetime.send_keys(DATETIME)
+
+        insert_email = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "email-field")))
+        insert_email.clear()  # Limpiar el campo antes de enviar el nuevo valor
+        insert_email.send_keys(EMAIL)
+
+        pick_a_month = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "month-field")))
+        pick_a_month.clear()
+        pick_a_month.send_keys(MONTH) #año y mes van por separado para que no salte error
+        pick_a_month.send_keys(Keys.TAB)
+        pick_a_month.send_keys(YEAR)
+
+        pick_a_number = Wait(driver, 10).until(EC.visibility_of_element_located((By.ID, "number-field")))
+        pick_a_number.clear()
+        pick_a_number.send_keys(NUMBER)
+
+        # Hacer clic en el botón de envío, como no tiene ID, utilicé un selector CSS por recomendación de chatgpt
+        submit_button = Wait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "input.styled-click-button[type='submit']")))
+        submit_button.click()
+
+19. #Luego se sale del navegador
+
+20. #probar de nuevo y hacerlo para Firefox u otro navegador
